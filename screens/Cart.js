@@ -82,7 +82,7 @@ class Cart extends Component {
                 this.props.checkout();
             }else{
                 this.notifyMessage('Something wrong with internet');
-            }         
+            }
             
         })
     }

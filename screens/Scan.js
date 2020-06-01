@@ -2,16 +2,22 @@ import React, { Component } from "react";
 import {
     View,
     Text,
-    StyleSheet, Dimensions, Platform, Image, SafeAreaView, Alert, Modal, TouchableHighlight,
+    StyleSheet,
+    Dimensions,
+    Platform, Image,
+    SafeAreaView,
+    Alert,
+    Modal,
+    TouchableHighlight,
     ToastAndroid,
     AlertIOS,
     ActivityIndicator,
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Permissions from 'expo-permissions';
-import { Camera } from 'expo-camera';
-import { withNavigationFocus } from 'react-navigation'
 
+import { withNavigationFocus } from 'react-navigation'
+import { Camera } from 'expo-camera';
 import { connect } from 'react-redux';
 import * as CartAction from '../action'
 
@@ -19,6 +25,7 @@ import service from '../service/Axios';
 import global from '../Global'
 import NavigationService from '../service/NavigationService';
 
+import CameraComp from '../screens/components/Camera'
 
 const { height, width } = Dimensions.get('window')
 const opacity = 'rgba(0, 0, 0, .6)';
@@ -78,9 +85,7 @@ class Scan extends Component {
                 <Text>Grand permison</Text>
             )
         } else if (!focus) {
-            return (
-                <Text>out focu</Text>
-            )
+            return null
         } else if (focus) {
             return (
                 <SafeAreaView style={styles.container}>
@@ -101,6 +106,7 @@ class Scan extends Component {
                 </SafeAreaView>
             )
         }
+
     }
     getURI(obj) {
         try {
@@ -277,4 +283,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(Scan)
+export default connect(null, mapDispatchToProps)(withNavigationFocus(Scan))

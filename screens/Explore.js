@@ -12,7 +12,7 @@ import {
     Dimensions, TouchableHighlight, TouchableOpacity, ActivityIndicator
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
-import { StackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 
 import global from '../Global'
 import service from '../service/Axios';
@@ -29,6 +29,9 @@ import Scan from "../screens/Scan"
 
 const { height, width } = Dimensions.get('window')
 class Explore extends Component {
+    static navigationOptions = {
+        title: 'He`',
+      };
     _isMounted = false;
     constructor(props) {
         super(props);
@@ -52,11 +55,13 @@ class Explore extends Component {
 
     componentDidMount() {
         this._isMounted = true;
+        
         if (this._isMounted) {
             service.fetchCate().then(res => {
                 this.setState({
                     allCate: res.data
                 });
+               console.log(res.config.headers)
             })
             service.fetchAllDish().then(res => {
                 this.setState({
@@ -186,7 +191,7 @@ class Explore extends Component {
         );
     }
 }
-export default Explore = StackNavigator({
+export default Explore = createStackNavigator({
     Explore: {
         screen: Explore,
         navigationOptions: {
@@ -215,8 +220,9 @@ export default Explore = StackNavigator({
             header: null,
         }
     },
-    
-   
+
+}, {
+
 });
 const styles = StyleSheet.create({
     cateLoader: {

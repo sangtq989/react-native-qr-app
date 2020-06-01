@@ -1,13 +1,32 @@
 import axios from 'axios';
-import global from "../Global"
+import global from "../Global";
+import { AsyncStorage } from 'react-native'
 
 const baseUrl = global.hostAddress;
-const serviceAxios = {
-    fetchCoins: function () {
 
-    },
+
+
+async function loadToken() {
+    let t = '';
+    try {
+        const tk = await AsyncStorage.getItem('userToken') || '';
+        return t = JSON.parse(tk).token;
+    } catch (error) {
+        console.log('Load token error: ', error);
+    }
+}
+
+
+const axiosConfig = {
+    headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "Authorization":  loadToken().then()
+    }
+};
+const serviceAxios = {
     fetchCate: function () {
-        return axios.get(baseUrl + 'categories');
+        return axios.get(baseUrl + 'categories', axiosConfig);
     },
     fetchDishByCate: function (idCate) {
         return axios.get(baseUrl + 'category/' + idCate);
@@ -18,10 +37,11 @@ const serviceAxios = {
     fetchDishDetail: function (id) {
         return axios.get(baseUrl + 'dish/' + id);
     },
-    submitCart: function (data) {        
-        return axios.post(baseUrl+'checkout', data);
+    submitCart: function (data) {
+        return axios.post(baseUrl + 'checkout', data);
+    },
+    getOrder: (user) => {
+        return axios.post(baseUrl + 'user-order', user);
     }
-
-
 }
 export default serviceAxios;

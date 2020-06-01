@@ -15,10 +15,11 @@ import CartIcon from './screens/components/Cart/CartIcon'
 
 const { height, width } = Dimensions.get('window');
 
-const NavHome = createBottomTabNavigator({
+const NavHomeContainer = createBottomTabNavigator({
     Explore: {
         screen: Explore,
         navigationOptions: {
+            header: null,
             tabBarLabel: 'EXPLORE',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="md-search" color={tintColor} size={24} />
@@ -28,6 +29,7 @@ const NavHome = createBottomTabNavigator({
     Cart: {
         screen: Cart,
         navigationOptions: {
+            header: null,
             tabBarLabel: 'Cart',
             tabBarIcon: ({ tintColor }) => (
                 <CartIcon name="md-cart" color={tintColor} size={24} />
@@ -51,6 +53,7 @@ const NavHome = createBottomTabNavigator({
     Inbox: {
         screen: Inbox,
         navigationOptions: {
+            headerMode: 'none',
             tabBarLabel: 'INBOX',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="md-chatboxes" color={tintColor} size={24} />
@@ -60,21 +63,21 @@ const NavHome = createBottomTabNavigator({
     Profile: {
         screen: Profile,
         navigationOptions: {
+            headerMode: 'none',
             tabBarLabel: 'PROFILE',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="md-person" color={tintColor} size={24} />
             )
         }
     }
-}, {
+}, {  
     tabBarOptions: {
         activeTintColor: 'red',
         inactiveTintColor: 'grey',
         style: {
             borderTopWidth: 0,
         }
-    }
+    },
 });
-
 // const NavHome = createAppContainer(NavHomeContainer);
-export default (NavHome)
+export default (NavHomeContainer)
