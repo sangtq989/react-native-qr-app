@@ -52,20 +52,22 @@ class Scan extends Component {
         console.log(status);
         this.setState({ hasCameraPermission: status === "granted" ? true : false });
     }
-    handleBarCodeScanned = ({ data }) => {
+    handleBarCodeScanned = async({ data }) => {
         try {
-            var obj = JSON.parse(data);
-            this.getURI(obj)
+            var obj = JSON.parse(data);           
         } catch (error) {
             console.log(error)
         }
         if (obj != undefined) {
-            this.setState({ modalVisible: true });
-            service.fetchDishDetail(obj.id).then(res => {
+            
+           await service.fetchDishDetail(obj.id).then(res => {
                 this.setState({
                     dishData: res.data
                 });
+                this.getURI(res.data)
             })
+            this.setState({ modalVisible: true });
+
         } else {
             this.notifyMessage("Maybe it not our QR code, Please try again");
         }
@@ -129,7 +131,7 @@ class Scan extends Component {
                     transparent={true}
                     visible={this.state.modalVisible}
                     onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
+                        this.setState({ modalVisible: false });
                     }}
                 >
 

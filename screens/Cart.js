@@ -11,7 +11,8 @@ import {
     Image,
     ImageBackground,
     Modal,
-    Alert
+    Alert,
+    AsyncStorage,
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -66,24 +67,30 @@ class Cart extends Component {
         return total
     }
 
-    submitHandle(data) {
-        // console.log(data);
+    async submitHandle(data) {
         data.payload.forEach(function (item) {
             delete item.dish_thumbnail;
             delete item.dish_description;
         });
-
-
+        try {
+            const userToken = await AsyncStorage.getItem('userToken');
+            var token = JSON.parse(userToken).token;
+            data = { ...data, token };
+        } catch (error) {
+            console.log(error);
+        }
+        //console.log(JSON.stringify(data));
         //console.log(JSON.stringify(data[0]));     
         service.submitCart(data).then(res => {
-            // console.log(res.data);
+            //console.log(res.data);
             if (res.data.success == "success") {
                 this.setModalVisible(true);
                 this.props.checkout();
-            }else{
+            } else {
                 this.notifyMessage('Something wrong with internet');
             }
-            
+        }).catch(err => {
+
         })
     }
 
@@ -120,7 +127,7 @@ class Cart extends Component {
                     </Modal>
                 </View>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10, marginTop: Platform.OS == 'android' ? 40 : 0 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10, marginTop: 20 }}>
                     <Text style={{ fontSize: 24, fontWeight: '700', paddingHorizontal: 20 }}>Cart</Text>
                     <View style={{ paddingHorizontal: 20, flexDirection: 'row' }}>
                         <Text style={{ alignSelf: 'center', fontSize: 20 }}>Subtotal: </Text>
@@ -250,7 +257,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         elevation: 2,
-        marginBottom:10
+        marginBottom: 10
 
     },
     textStyle: {
@@ -262,6 +269,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 15,
         textAlign: "center",
-        fontWeight: "bold",        
+        fontWeight: "bold",
     }
 });

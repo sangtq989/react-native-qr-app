@@ -18,6 +18,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Users from './users'
 
 import AuthenAxios from '../service/AuthenAxios'
+import message from '../service/ToastMessage'
 
 import NavigationService from '../service/NavigationService';
 class Login extends Component {
@@ -32,7 +33,7 @@ class Login extends Component {
     data: [],
   };
   _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken',  JSON.stringify(this.state.data));
+    await AsyncStorage.setItem('userToken', JSON.stringify(this.state.data));
     NavigationService.navigate('NavHome')
   };
 
@@ -89,15 +90,7 @@ class Login extends Component {
   }
 
   async loginHandle(userName, password) {
-    await AuthenAxios.login(userName, password).then(response => {     
-      this.setState({
-        ...this.state,
-        data: response.data
-      })
-      console.log(this.state.data);
-    }).catch(error => {
-      console.log(error.response)
-    });
+
     if (this.state.username.length == 0 || this.state.password.length == 0) {
       Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
         { text: 'Okay' }
@@ -110,7 +103,25 @@ class Login extends Component {
       ]);
       return;
     }
-    this._signInAsync()
+    await AuthenAxios.login(userName, password).then(response => {
+      if (response.status == 422) {
+        message('Wrong');
+        NavigationService.navigate('Auth');       
+      } else {
+        this.setState({
+          ...this.state,
+          data: response.data
+        })
+        this._signInAsync()
+      }
+      console.log(response.status);
+    }).catch(error => {
+      if (error.response.status == 422) {
+        message('Wrong username or password');
+        NavigationService.navigate('Auth');       
+      }
+      console.log("server error");     
+    });
   }
 
 
@@ -156,8 +167,6 @@ class Login extends Component {
               <Text style={styles.errorMsg}>Username must be 4 characters long.</Text>
             </Animatable.View>
           }
-
-
           <Text style={[styles.text_footer, {
             marginTop: 35
           }]}>Password</Text>

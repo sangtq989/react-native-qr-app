@@ -19,6 +19,7 @@ import Login from './Login';
 import Register from './Register';
 import NavHome from '../NavHome';
 import NavigationService from '../service/NavigationService';
+import message from '../service/ToastMessage';
 class AuthLoadingScreen extends Component {
     constructor() {
         super();
@@ -27,17 +28,18 @@ class AuthLoadingScreen extends Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('userToken'); 
-        const token = JSON.parse(userToken);      
+        const userToken = await AsyncStorage.getItem('userToken');
+        const token = JSON.parse(userToken);
         //console.log(token.token)       
         await AuthenAxios.checkToken(token).then(response => {
-            //console.log(response.data);
-            AsyncStorage.setItem('userToken',  JSON.stringify(response.data)).then(
+            //console.log(response.data);            
+            AsyncStorage.setItem('userToken', JSON.stringify(response.data)).then(
                 NavigationService.navigate('NavHome')
             );
         }).catch(error => {
-            console.log(error.response)
+            // console.log(error.response)
             NavigationService.navigate('Auth')
+            message('Noooo')
         });
         //NavigationService.navigate(userToken ? 'NavHome' : 'Auth');
     };

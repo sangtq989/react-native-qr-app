@@ -16,10 +16,7 @@ class CartItem extends Component {
     }
     delete(item){
        this.props.deleteItem(item)
-    }
-    click(id) {
-        console.log(id)
-    }
+    }   
     render() {
         const dish = this.props.dish
         var thumbnail = JSON.parse(dish.dish_thumbnail);

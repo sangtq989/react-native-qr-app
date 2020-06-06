@@ -3,7 +3,7 @@ const initialState = {
     total: 0,
     cartItem: [
 
-    ],
+    ],    
 }
 
 

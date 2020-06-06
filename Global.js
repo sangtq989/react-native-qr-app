@@ -1,7 +1,7 @@
 
-var ip = "10.0.44.112";
-var homeIp = '192.168.100.18';
+var ip = "192.168.43.22";
+var homeip = '192.168.100.18';
 export default global = {    
-    hostAddress: "http://"+homeIp+":8000/api/",
-    imgDirectory: "http://"+homeIp+":8000/images/"
+    hostAddress: "http://"+homeip+":8000/api/",
+    imgDirectory: "http://"+homeip+":8000/images/"
 }

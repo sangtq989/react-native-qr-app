@@ -20,8 +20,7 @@ async function loadToken() {
 const axiosConfig = {
     headers: {
         'Content-Type': 'application/json;charset=UTF-8',
-        "Access-Control-Allow-Origin": "*",
-        "Authorization":  loadToken().then()
+        "Access-Control-Allow-Origin": "*",      
     }
 };
 const serviceAxios = {
@@ -42,6 +41,9 @@ const serviceAxios = {
     },
     getOrder: (user) => {
         return axios.post(baseUrl + 'user-order', user);
+    },
+    cancelOrder: (data) =>{
+        return axios.post(baseUrl + 'cancel-order', data,axiosConfig);
     }
 }
 export default serviceAxios;

@@ -41,10 +41,10 @@ class DetailDishScreen extends Component {
         this.notifyMessage('Added to cart');
     }
 
-    componentDidMount() {
+    async  componentDidMount() {
         this._isMounted = true;
         if (this._isMounted) {
-            service.fetchDishDetail(this.props.navigation.state.params.id).then(res => {
+            await service.fetchDishDetail(this.props.navigation.state.params.id).then(res => {
                 this.setState({
                     dishDetail: res.data,
                     images: res.data.dish_thumbnail
@@ -105,11 +105,16 @@ class DetailDishScreen extends Component {
                         </Text>
                     </View>
                     <View style={styles.button}>
-                        <Button
-                            title="Add to cart"
-                            color="#841584"
-                            onPress={() => this.handle(this.state.dishDetail)}
-                        />
+                        {
+                            (this.state.dishDetail != '') ?
+                                <Button
+                                    title="Add to cart"
+                                    color="#841584"
+                                    onPress={() => this.handle(this.state.dishDetail)}
+                                /> :
+                                <Text></Text>
+                        }
+
 
                     </View>
                 </View>
@@ -137,24 +142,24 @@ const styles = StyleSheet.create({
     },
     detail: {
         padding: 20,
-        flex:1,        
-        flexDirection:'column'
+        flex: 1,
+        flexDirection: 'column'
     },
     title: {
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
-        height: height / 12,       
+        height: height / 12,
         justifyContent: 'space-between',
-        flex:2
+        flex: 2
     },
-    content:{
+    content: {
         flex: 5
     },
-    button:{     
-        marginTop: 10,   
-        justifyContent: "flex-end" ,
-        flex:5                  
+    button: {
+        marginTop: 10,
+        justifyContent: "flex-end",
+        flex: 5
     }
 
 })

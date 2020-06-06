@@ -7,7 +7,12 @@ import {
     ScrollView,
     AsyncStorage,
     RefreshControl,
-    Dimensions
+    Dimensions,
+    Platform,
+    ToastAndroid,
+    AlertIOS,
+    ActivityIndicator,
+    ImageBackground
 } from "react-native";
 import service from '../service/Axios'
 import CoinList from "./components/Test/CoinList";
@@ -15,6 +20,8 @@ import { connect } from 'react-redux';
 import addToCart from '../action'
 import store from '../store'
 import NavigationService from '../service/NavigationService';
+import message from '../service/ToastMessage'
+
 
 import OrderItem from '../screens/components/Order/OrderItem'
 
@@ -22,13 +29,22 @@ import Constants from 'expo-constants';
 const { height, width } = Dimensions.get('window')
 class Inbox extends Component {
 
+    initialState = {
+        orders: [],
+        data: null,
+        refreshing: false,
+        emptyOrder: true
+    };
     constructor(props) {
         super(props);
-        this.state = {
-            orders: [],
-            data: null,
-            refreshing: false
-        };
+        this.state = this.initialState
+    }
+    notifyMessage(msg) {
+        if (Platform.OS === 'android') {
+            ToastAndroid.show(msg, ToastAndroid.SHORT)
+        } else if (Platform.OS === 'ios') {
+            AlertIOS.alert(msg);
+        }
     }
     _getUserData = async () => {
         try {
@@ -43,58 +59,100 @@ class Inbox extends Component {
 
         }
     };
+    async _cancel(order) {
+        var user = await AsyncStorage.getItem('userToken');
+        delete order.dishes;
 
-    async componentDidMount() {
+        var data = {
+            token: JSON.parse(user).token,
+            order: order
+        };
+        // console.log(JSON.stringify(data))
+        service.cancelOrder(JSON.stringify(data))
+            .then(res => {
+                console.log((res.data));
+                (res.data) ? message('Cancel success') : message("Order is on the way, you can't cancel anymore")
+            })
+            .catch(err => {
+                console.log("---------err-----------")
+                console.log(err.response)
+                message('This dish now on the way, please patient');
+                this.setState(this.initialState);
+                this.componentDidMount();
+            }).finally(() =>{
+                this.setState(this.initialState);
+                this.componentDidMount();
+            })
+    }
+    async getData() {
         await this._getUserData();
         service.getOrder(this.state.data).then(res => {
-            //console.log(res.data);
-            this.setState({
-                orders: res.data
-            })
-            console.log(this.state.orders)
+            if (res.data.length > 0) {
+                this.setState({
+                    orders: res.data,
+                    emptyOrder: true
+                })
+            }
+
         }).catch(err => {
             console.log('oof--------------------')
             console.log(err.response)
-            //NavigationService.navigate('Auth')
+            if (err.response.status = 422) {
+                NavigationService.navigate('Auth')
+            }
         })
-        console.log(this.state.data)
+    }
+
+    async componentDidMount() {
+        await this.getData()
     }
     onRefresh = (async () => {
         this.setState({ refreshing: true });
+        this.setState(this.initialState);
         await this.componentDidMount();
         this.setState({ refreshing: false })
     });
 
     render() {
-
         return (
-            <ScrollView
-                contentContainerStyle={styles.scrollView}
-                refreshControl={
-                    <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-                }
-            >
-                {
-                    (typeof this.state.orders !== 'undefined' && this.state.orders.length > 0)
-                        ?
-                        this.state.orders.map(() => {
-                            return (
-                                <View>
-                                    <Text>test</Text>
-                                    <OrderItem title='Customized Card 1' expanded={false}>
-                                        <Text>Hello, this is first line.</Text>
-                                        <Text>Hello, this is second line.</Text>
-                                        <Text>Hello, this is third line.</Text>
-                                    </OrderItem>
+            <View style={{ height: height, }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', paddingBottom: 10 }}>
+                    <Text style={{ fontSize: 24, fontWeight: '700', paddingVertical: 10 }}>Your Order</Text>
+                </View>
+                <ScrollView
+                    style={{ backgroundColor: '#EFEFEF', width: '100%', }}
+                    contentContainerStyle={styles.scrollView}
+                    refreshControl={
+                        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                    }
+                >
+                    {
+                        (typeof this.state.orders !== 'undefined' && this.state.orders.length > 0)
+                            ?
+                            this.state.orders.map((item) => {
+                                console.log(item)
+                                return (
+                                    <View key={item.id} style={styles.cartItem}>
+                                        <OrderItem click={this._cancel.bind(this)} order={item} dish={item.dishes} />
+                                    </View>
+                                )
+                            })
+                            : (this.state.emptyOrder) ?
+                                <View style={{ height: height, width: width}}>
+                                    <ImageBackground
+                                        source={require('../assets/empty.jpg')}
+                                        resizeMode='contain'
+                                        style={{ width: '100%', height: '60%', marginLeft: 5 }}
+                                    >
+                                    </ImageBackground>
                                 </View>
+                            :
+                            <View style={styles.container}><ActivityIndicator /></View>
 
-                            )
-                        })
-                        :
-                        <Text>Nothing</Text>
+                    }
+                </ScrollView>
+            </View>
 
-                }
-            </ScrollView>
         );
     }
 }
@@ -104,13 +162,19 @@ class Inbox extends Component {
 export default (Inbox);
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: Constants.statusBarHeight,
+
+    indicator: {
+        width: width
     },
-    scrollView: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+
+    container: {
+        flex: 10,
+        marginTop: Constants.statusBarHeight,
+        alignItems: "center"
+
+    },
+    cartItem: {
+        width: width,
+        marginVertical: 10
     },
 });

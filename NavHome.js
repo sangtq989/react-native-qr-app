@@ -19,7 +19,7 @@ const NavHomeContainer = createBottomTabNavigator({
     Explore: {
         screen: Explore,
         navigationOptions: {
-            header: null,
+            headerMode: 'none',
             tabBarLabel: 'EXPLORE',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="md-search" color={tintColor} size={24} />
@@ -29,11 +29,12 @@ const NavHomeContainer = createBottomTabNavigator({
     Cart: {
         screen: Cart,
         navigationOptions: {
-            header: null,
+            headerMode: 'none',
             tabBarLabel: 'Cart',
             tabBarIcon: ({ tintColor }) => (
                 <CartIcon name="md-cart" color={tintColor} size={24} />
-            )
+            ),
+            
         }
     },
     Scan: {
@@ -57,7 +58,10 @@ const NavHomeContainer = createBottomTabNavigator({
             tabBarLabel: 'INBOX',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="md-chatboxes" color={tintColor} size={24} />
-            )
+            ),
+            style: {
+                backgroundColor:"#EFEFEF"
+            }
         }
     },
     Profile: {

@@ -12,7 +12,7 @@ let axiosConfig = {
 const authAxios = {
     login : function(username, password){
         const credentials ={email: username, password:password};
-        console.log(JSON.stringify(credentials));
+        // console.log(JSON.stringify(credentials));
         return axios.post(baseUrl+'login', JSON.stringify(credentials),axiosConfig)       
     },
     checkToken: (token) =>{

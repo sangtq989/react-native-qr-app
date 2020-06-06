@@ -61,7 +61,7 @@ class Explore extends Component {
                 this.setState({
                     allCate: res.data
                 });
-               console.log(res.config.headers)
+            //    console.log(res.config.headers)
             })
             service.fetchAllDish().then(res => {
                 this.setState({
@@ -89,7 +89,7 @@ class Explore extends Component {
                             shadowColor: 'black',
                             shadowOpacity: 0.2,
                             elevation: 1,
-                            marginTop: Platform.OS == 'android' ? 30 : null
+                            
                         }}>
                             <Icon name="ios-search" size={20} style={{ marginRight: 10 }} />
                             <TextInput
